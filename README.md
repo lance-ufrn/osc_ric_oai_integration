@@ -177,7 +177,7 @@ sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/du_gnb.conf
 
 After running gNodeB CU and DU, you can check the exchange of E2 messages, indicating the setup of the E2 interface between the OAI and the OSC RIC, as shown in the image below.
 
-![Alt text](cu_e2_connected.png)
+![Alt text](images/e2_connected.png)
 
 # Check connection in the OSC RIC
 
