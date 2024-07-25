@@ -7,20 +7,93 @@ This tutorial aims to integrate the OpenAirInterface (OAI) and the O-RAN Softwar
   * RAM: 16 GB
   * 4 CPUs
 
-
-## FlexRIC Installation
-FlexRIC is the OAI solution for the RAN Intelligent Controller (RIC). Although OSC RIC is used in this tutorial, in order to integrate OAI with OSC RIC it is necessary to install FlexRIC, as it installs the Service Models used by OAI gNodeB.
-
-* Update and Upgrade:
-```sh
-sudo apt-get update
-sudo apt-get upgrade
-```
+## OAI Core 5G Installation
 
 * Install dependencies:
 ```sh
-sudo apt-get install -y python3.8 git cmake-curses-gui autotools-dev automake g++ make libpcre2-dev byacc cmake python3-dev libsctp-dev pcre2-utils bison
+sudo su
+apt update -y
+apt upgrade -y
+apt install -y \
+    python3-pip \
+    git \
+    curl \
+    cmake \
+    tree \
+    build-essential \
+    nfs-common \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    python3.8 \
+    cmake-curses-gui \
+    autotools-dev \
+    automake \
+    g++ \
+    make \
+    libpcre2-dev \
+    byacc \
+    python3-dev \
+    libsctp-dev \
+    pcre2-utils \
+    bison \
+    software-properties-common
 ```
+
+* Enable packet forwarding
+```sh
+sudo sysctl net.ipv4.conf.all.forwarding=1
+sudo iptables -P FORWARD ACCEPT
+```
+
+* Install docker and docker-compose
+```sh
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+"deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+"$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+```
+
+* Pull the images from Docker Hub
+```sh
+sudo docker pull oaisoftwarealliance/oai-amf:v1.5.0
+sudo docker pull oaisoftwarealliance/oai-nrf:v1.5.0
+sudo docker pull oaisoftwarealliance/oai-smf:v1.5.0
+sudo docker pull oaisoftwarealliance/oai-udr:v1.5.0
+sudo docker pull oaisoftwarealliance/oai-udm:v1.5.0
+sudo docker pull oaisoftwarealliance/oai-ausf:v1.5.0
+sudo docker pull oaisoftwarealliance/oai-spgwu-tiny:v1.5.0
+sudo docker pull oaisoftwarealliance/trf-gen-cn5g:latest
+```
+
+* Tag Docker Images
+```sh
+sudo docker image tag oaisoftwarealliance/trf-gen-cn5g:latest trf-gen-cn5g:latest
+sudo docker image tag oaisoftwarealliance/oai-amf:v1.5.0 oai-amf:v1.5.0
+sudo docker image tag oaisoftwarealliance/oai-nrf:v1.5.0 oai-nrf:v1.5.0
+sudo docker image tag oaisoftwarealliance/oai-smf:v1.5.0 oai-smf:v1.5.0
+sudo docker image tag oaisoftwarealliance/oai-udr:v1.5.0 oai-udr:v1.5.0
+sudo docker image tag oaisoftwarealliance/oai-udm:v1.5.0 oai-udm:v1.5.0
+sudo docker image tag oaisoftwarealliance/oai-ausf:v1.5.0 oai-ausf:v1.5.0
+sudo docker image tag oaisoftwarealliance/oai-spgwu-tiny:v1.5.0 oai-spgwu-tiny:v1.5.0
+```
+
+* Clone OpenAirInterface 5G Core repository
+```sh
+git clone https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed.git
+cd oai-cn5g-fed
+git checkout -f v1.5.0
+```
+
+## FlexRIC Installation
+FlexRIC is the OAI solution for the RAN Intelligent Controller (RIC). Although OSC RIC is used in this tutorial, in order to integrate OAI with OSC RIC it is necessary to install FlexRIC, as it installs the Service Models used by OAI gNodeB.
 
 * Install SWIG:
 ```sh
