@@ -189,4 +189,4 @@ To visualize and follow the logs, run the command below, in one terminal for `e2
 kubectl logs -n ricplt -f full-name-of-pod
 ```
 
-... TO BE DONE ...
+* In the images below you can see the new connection request messages sent by the CU and DU to the e2term-alpha pod
