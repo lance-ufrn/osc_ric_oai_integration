@@ -189,4 +189,17 @@ To visualize and follow the logs, run the command below, in one terminal for `e2
 kubectl logs -n ricplt -f full-name-of-pod
 ```
 
-* In the images below you can see the new connection request messages sent by the CU and DU to the e2term-alpha pod
+* In the images below we can see, via `e2term-alpha` logs, the `New connection request` messages sent by the OAI CU and DU to the `e2term-alpha` pod:
+
+![Alt text](images/osc_ric_e2_term_cu_request.png)
+![Alt text](images/osc_ric_e2_term_du_request.png)
+
+* In addition, via the `e2mgr` logs, we can see that the `E2 setup request` has been received from the OAI CU and DU, as shown in the images below:
+
+![Alt text](images/osc_ric_e2_mgr_cu_setup_request.png)
+![Alt text](images/osc_ric_e2_mgr_du_setup_request.png)
+
+* Furthermore, still in the `e2mgr` logs, we can see the `RanConnectStatusChangeManager` message from the CU and DU, changing from *Disconnected* to *Connected* status, as shown in the figures below:
+
+![Alt text](images/osc_ric_e2_mgr_cu_connected.png)
+![Alt text](images/osc_ric_e2_mgr_du_connected.png)
