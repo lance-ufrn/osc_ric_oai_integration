@@ -7,6 +7,14 @@ This tutorial aims to integrate the OpenAirInterface (OAI) and the O-RAN Softwar
   * RAM: 16 GB
   * 4 CPUs
 
+## Citation
+
+If you use this tutorial, please cite our paper *Advanced Network Integration: O-RAN Near-RT RIC and OpenAirInterface RAN*. Here is a suitable BibTeX entry:
+
+```
+To appear in NVF-SDN
+```
+
 ## OAI Core 5G Installation
 
 * Install dependencies:
@@ -92,8 +100,22 @@ cd oai-cn5g-fed
 git checkout -f v1.5.0
 ```
 
+* Synchronizing the tutorials
+```sh
+cd oai-cn5g-fed
+sudo ./scripts/syncComponents.sh
+sudo git submodule deinit --all --force
+sudo git submodule init
+sudo git submodule update
+```
+
+* Create the bridge 5G Core
+```sh
+sudo docker network create --driver=bridge --subnet=192.168.70.128/26 -o "com.docker.network.bridge.name"="demo-oai" demo-oai-public-net
+```
+
 ## FlexRIC Installation
-FlexRIC is the OAI solution for the RAN Intelligent Controller (RIC). Although OSC RIC is used in this tutorial, in order to integrate OAI with OSC RIC it is necessary to install FlexRIC, as it installs the Service Models used by OAI gNodeB.
+FlexRIC is the OAI solution for the RAN Intelligent Controller (RIC). Although OSC RIC is used in this tutorial, in order to integrate OAI with OSC RIC it is necessary to install FlexRIC, as it installs the Service Models used by OAI gNodeB. In a new terminal, follow the steps below:
 
 * Install SWIG:
 ```sh
@@ -108,7 +130,9 @@ sudo make install
 
 * Install FlexRIC:
 ```sh
+cd ~
 git clone https://gitlab.eurecom.fr/mosaic5g/flexric flexric
+cd flexric/
 git checkout beabdd072ca9e381d4d27c9fbc6bb19382817489
 mkdir build && cd build && cmake .. && make -j8
 sudo make install
@@ -117,6 +141,7 @@ sudo make install
 ## OpenAirInterface Installation
 In this section, we will install the OAI in the simulated version and with the E2 interface enabled.
 ```sh
+cd ~
 git clone https://gitlab.eurecom.fr/oai/openairinterface5g oai
 cd oai/
 git checkout e8a083767af14d7b36c0624f3dc586aae07711bc
@@ -124,14 +149,13 @@ cd cmake_targets/
 ./build_oai -I -w SIMU --gNB --nrUE --build-e2 --ninja
 ```
 
-## OSC RIC J Release installation
-In this section, we will install the OSC RIC from the official O-RAN repository, using J Release.
+## OSC RIC J Release installation and deployment
+In this section, we will install the OSC RIC from the official O-RAN repository, using J Release. In a new terminal, follow the steps below:
 
 * Enter in sudo mode and update:
 ```sh
 sudo -i 
 apt update -y
-apt upgrade -y
 ```
 
 * Install dependencies:
@@ -164,7 +188,7 @@ After installation, use the command below to check that all pods have the status
 ./install_common_templates_to_helm.sh
 ```
 
-* Install OSC RIC:
+* Install and deploy OSC RIC:
 ```sh
 ./install -f ../RECIPE_EXAMPLE/example_recipe_oran_j_release.yaml
 ```
@@ -229,6 +253,16 @@ e2_agent = {
   near_ric_ip_addr = "10.244.0.16";
   sm_dir = "/usr/local/lib/flexric/"
 }
+```
+
+# Modifications to connect OAI gNodeB and OAI 5G Core
+
+
+# OAI 5G Core deployment
+
+```sh
+cd oai-cn5g-fed/docker-compose
+sudo python3 core-network.py --type start-basic --scenario 1
 ```
 
 # OAI gNodeB deployment
