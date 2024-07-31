@@ -12,7 +12,12 @@ This tutorial aims to integrate the OpenAirInterface (OAI) and the O-RAN Softwar
 If you use this tutorial, please cite our paper *Advanced Network Integration: O-RAN Near-RT RIC and OpenAirInterface RAN*. Here is a suitable BibTeX entry:
 
 ```
-To appear in NVF-SDN
+@inproceedings{matheus2024,
+  title = {{Advanced Network Integration: O-RAN Near-RT RIC and OpenAirInterface RAN}},
+  author = {Matheus Dória, Ricardo Queiroz, Carlos Lima, Paulo Silva, Vicente Sousa, Antonio Campos and Augusto Neto}
+  booktitle = {To appear in IEEE Conference on Network Function Virtualization and Software Defined Networks},
+  year = {2024}
+}
 ```
 
 ## OAI Core 5G Installation
@@ -56,17 +61,14 @@ sudo iptables -P FORWARD ACCEPT
 
 * Install docker and docker-compose
 ```sh
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
-
-echo \
-"deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-"$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
+sudo rm /etc/apt/sources.list.d/docker.list*
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(. /etc/os-release; echo "$UBUNTU_CODENAME") stable"
 sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 ```
 
 * Pull the images from Docker Hub
@@ -256,6 +258,16 @@ e2_agent = {
 ```
 
 # Modifications to connect OAI gNodeB and OAI 5G Core
+
+To correctly connect OAI DU with OAI CU and OAI CU with OAI 5G Core, it is necessary to modify some authentication parameters and also the AMF's IP.
+
+First, configure the `tracking_area_code`, `mcc`, `mnc`, `sst` and `sd` parameters as shown in the image below. You need to make these changes in the CU and DU configuration files (`oai/targets/PROJECTS/GENERIC-NR-5GC/CONF/cu_gnb.conf` and `oai/targets/PROJECTS/GENERIC-NR-5GC/CONF/du_gnb.conf`).
+
+![Alt text](images/configure_plmn.png)
+
+Then, only in the CU configuration file, modify the `amf_ip_address`, `GNB_IPV4_ADDRESS_FOR_NG_AMF` and `GNB_IPV4_ADDRESS_FOR_NGU` parameters according to the IPs shown in the image below.
+
+![Alt text](images/amf_ip_configuration.png)
 
 
 # OAI 5G Core deployment
