@@ -20,7 +20,7 @@ If you use this tutorial, please cite our paper *Advanced Network Integration: O
 }
 ```
 
-## OAI Core 5G Installation
+## OAI 5G Core Installation
 
 * Install dependencies:
 ```sh
@@ -257,7 +257,7 @@ e2_agent = {
 }
 ```
 
-# Modifications to connect OAI gNodeB and OAI 5G Core
+# Modifications to connect OAI gNodeB to OAI 5G Core
 
 To correctly connect OAI DU with OAI CU and OAI CU with OAI 5G Core, it is necessary to modify some authentication parameters and also the AMF's IP.
 
@@ -269,6 +269,22 @@ Then, only in the CU configuration file, modify the `amf_ip_address`, `GNB_IPV4_
 
 ![Alt text](images/amf_ip_configuration.png)
 
+# Modifications to connect OAI NR UE to OAI 5G Core and OAI gNodeB
+To correctly connect the NR UE to OAI gNodeB and OAI 5G Core, it is necessary to modify some authentication parameters in the UE configuration file.
+
+* Open the UE configuration file in the following path: `oai/cmake_targets/ran_build/build/ue.conf`
+
+* Change the parameters according to the code below:
+```sh
+uicc0 = {
+imsi = "208950000000031";
+key = "0C0A34601D4F07677303652C0462535B";
+opc= "63bfa50ee6523365ff14c1f45f88737d";
+dnn= "default";
+nssai_sst=222;
+nssai_sd=123;
+}
+```
 
 # OAI 5G Core deployment
 
@@ -276,6 +292,9 @@ Then, only in the CU configuration file, modify the `amf_ip_address`, `GNB_IPV4_
 cd oai-cn5g-fed/docker-compose
 sudo python3 core-network.py --type start-basic --scenario 1
 ```
+
+**NOTE: If you want to stop the execution of OAI 5G Core, just run the following command: `sudo python3 core-network.py --type stop-basic --scenario 1`**
+
 
 # OAI gNodeB deployment
 
@@ -297,6 +316,30 @@ sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/du_gnb.conf
 After running gNodeB CU and DU, you can check the exchange of E2 messages, indicating the setup of the E2 interface between the OAI and the OSC RIC, as shown in the image below.
 
 ![Alt text](images/e2_connected.png)
+
+# OAI NR UE deployment
+
+* Go to the OAI build folder:
+```sh
+cd oai/cmake_targets/ran_build/build
+```
+
+* Run OAI NR UE
+```sh
+sudo ./nr-uesoftmodem -E -C 3619200000 --rfsim --sa -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/ue.conf
+```
+
+# Check connection in the OAI 5G Core
+To verify the connection of OAI gNodeB and OAI NR UE to OAI 5G Core, you need to check the `Access and Mobility Management Function (AMF)` logs.
+
+* Check the `Access and Mobility Management Function (AMF)` logs:
+```sh
+sudo docker logs -f oai-amf
+```
+
+In these logs you should find OAI gNB CU with the status `Connected` and OAI NR UE with the status `5GMM-REGISTERED`, as in the image below:
+
+![Alt text](images/amf_logs.png)
 
 # Check connection in the OSC RIC
 
