@@ -272,7 +272,7 @@ Then, only in the CU configuration file, modify the `amf_ip_address`, `GNB_IPV4_
 # Modifications to connect OAI NR UE to OAI 5G Core and OAI gNodeB
 To correctly connect the NR UE to OAI gNodeB and OAI 5G Core, it is necessary to modify some authentication parameters in the UE configuration file.
 
-* Open the UE configuration file in the following path: `oai/cmake_targets/ran_build/build/ue.conf`
+* Open the UE configuration file in the following path: `oai/targets/PROJECTS/GENERIC-NR-5GC/CONF/ue.conf`
 
 * Change the parameters according to the code below:
 ```sh
