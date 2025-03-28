@@ -121,6 +121,7 @@ FlexRIC is the OAI solution for the RAN Intelligent Controller (RIC). Although O
 
 * Install SWIG:
 ```sh
+cd ~
 git clone https://github.com/swig/swig.git
 cd swig
 git checkout release-4.1
