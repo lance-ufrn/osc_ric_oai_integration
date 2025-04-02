@@ -180,7 +180,10 @@ cd ric-dep/bin
 ```sh
 ./install_k8s_and_helm.sh
 ```
-After installation, use the command below to check that all pods have the status “Running”.
+After installation, use the command below to check that all pods have the status “Running”:
+```sh
+kubectl get pods -n kube-system
+```
 
 ![Alt text](images/check_kubernetes_pods.png)
 
